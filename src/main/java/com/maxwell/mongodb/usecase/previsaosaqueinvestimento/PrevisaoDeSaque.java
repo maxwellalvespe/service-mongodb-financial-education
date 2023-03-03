@@ -1,6 +1,5 @@
 package com.maxwell.mongodb.usecase.previsaosaqueinvestimento;
 
-import com.maxwell.mongodb.model.Investment;
 import com.maxwell.mongodb.repository.InvestimentRepository;
 import com.maxwell.mongodb.usecase.ConsultaInvistimento;
 import lombok.RequiredArgsConstructor;
