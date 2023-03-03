@@ -1,4 +1,4 @@
-package com.maxwell.mongodb.usecase.registrarPagamento;
+package com.maxwell.mongodb.usecase.registrarpagamento;
 
 import com.maxwell.mongodb.model.Payment;
 import com.maxwell.mongodb.model.Status;
@@ -28,11 +28,11 @@ public class RealizarPagamentoUseCase implements RealizarPagamento {
         List<Payment> engagements = new ArrayList<>();
         for (Payment payment : payments) {
             if (payment.getStatus().equals(Status.UNPAID)) {
-                log.info("Registrando pagamento do tipo :: {}",payment.getStatus());
+                log.info("Registrando pagamento do tipo :: {}", payment.getStatus());
                 registerPaymentUnpaid(engagements, payment);
             } else {
                 registerPaymentPaid(engagements, payment);
-                log.info("Registrando pagamento do tipo :: {}",payment.getStatus());
+                log.info("Registrando pagamento do tipo :: {}", payment.getStatus());
             }
         }
 
@@ -43,6 +43,7 @@ public class RealizarPagamentoUseCase implements RealizarPagamento {
         engagements.add(repository.save(Payment.builder()
                 .number(payment.getNumber())
                 .status(payment.getStatus())
+                .amountPaid(payment.getAmountPaid())
                 .value(payment.getValue())
                 .dateExpiration(payment.getDateExpiration())
                 .datePayment(payment.getDatePayment())

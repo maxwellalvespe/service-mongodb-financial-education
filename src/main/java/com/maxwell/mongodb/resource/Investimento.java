@@ -1,4 +1,4 @@
-package com.maxwell.mongodb.controller;
+package com.maxwell.mongodb.resource;
 
 import com.maxwell.mongodb.model.Investment;
 import com.maxwell.mongodb.repository.InvestimentRepository;

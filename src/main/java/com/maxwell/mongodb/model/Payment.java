@@ -23,7 +23,7 @@ public class Payment {
     private Status status;
     private BigDecimal value;
     private BigDecimal updatedValue;
-    private BigDecimal amountPaid;
+    private Double amountPaid;
     private LocalDate dateExpiration;
     private LocalDate datePayment;
 
