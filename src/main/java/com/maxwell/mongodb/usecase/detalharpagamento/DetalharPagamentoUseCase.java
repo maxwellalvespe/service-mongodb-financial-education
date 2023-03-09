@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
@@ -21,38 +22,41 @@ public class DetalharPagamentoUseCase implements DetalharPagamento {
     private final PaymentRepository repository;
 
     @Override
-    public PaymentDetails detalhar() {
-        List<Payment> parcelasPagas = repository.findAll();
-
-        var pendente = parcelasPagas.stream().filter(f -> f.getStatus().equals(Status.UNPAID))
-                .collect(Collectors.toList());
-
-        var pagas = parcelasPagas.stream().filter(f -> f.getStatus().equals(Status.PAID)).toList();
-
-        var totalPago = pagas.stream()
-                .mapToDouble(Payment::getAmountPaid)
-                .sum();
-
-        var totalEsperadoPelaFinanciadora = pagas.stream().mapToDouble(e -> e.getValue().doubleValue()
-        ).sum();
-
-
-        if (pendente.size() > 1) {
-            return PaymentDetails.builder().effectiveEconomy(BigDecimal.valueOf(totalEsperadoPelaFinanciadora - totalPago))
-                    .paymentEffective(getPaymentEffective(pendente, totalPago))
-                    .valueExpectedFinance(BigDecimal.valueOf(totalEsperadoPelaFinanciadora))
-                    .totalInstallmentsPaid(pendente.size())
-                    .build();
-        }
-        return PaymentDetails.builder()
-                .effectiveEconomy(BigDecimal.valueOf(totalEsperadoPelaFinanciadora - totalPago))
-                .paymentEffective(getPaymentEffective(pendente, totalPago))
-                .valueExpectedFinance(BigDecimal.valueOf(totalEsperadoPelaFinanciadora))
-                .totalInstallmentsPaid(pagas.size())
-                .build();
+    public PaymentDetails detalhar(Status status) {
+        List<Payment> parcelas = repository.findAll();
+        return getPaymentDetails(parcelas, status);
     }
 
-    private static Double getPaymentEffective(List<Payment> pendente, double totalPago) {
-        return nonNull(totalPago) ? totalPago : pendente.stream().mapToDouble(p -> p.getUpdatedValue().doubleValue()).sum();
+    private PaymentDetails getPaymentDetails(List<Payment> parcelas, Status status) {
+
+        var registros = parcelas.stream().filter(f -> f.getStatus().equals(status))
+                .toList();
+
+
+        var quantidade = registros.size();
+        var valorEsperado = registros.stream().map(Payment::getValue)
+                .mapToDouble(BigDecimal::doubleValue)
+                .sum();
+
+        var paymentDetails = PaymentDetails.builder()
+                .totalInstallmentsPaid(quantidade)
+                .valueExpectedFinance(getFormat(valorEsperado))
+                .build();
+        if (status.equals(Status.PAID)) {
+            var valorPago = registros.stream().map(Payment::getAmountPaid).mapToDouble(Double::doubleValue).sum();
+            paymentDetails.setPaymentEffective(getFormat(valorPago));
+            paymentDetails.setEffectiveEconomy(getFormat(valorEsperado - valorPago));
+        }else {
+            var pendente = registros.stream().map(Payment::getUpdatedValue).mapToDouble(BigDecimal::doubleValue).sum();
+            paymentDetails.setValueUnpaid(getFormat(pendente));
+            paymentDetails.setPaymentEffective(getFormat(valorEsperado-pendente));
+
+        }
+        return paymentDetails;
+
+    }
+
+    private String getFormat(Double value) {
+        return String.format("R$ %.2f", value);
     }
 }

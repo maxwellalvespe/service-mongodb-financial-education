@@ -2,6 +2,7 @@ package com.maxwell.mongodb.resource;
 
 import com.maxwell.mongodb.model.Payment;
 import com.maxwell.mongodb.model.PaymentDetails;
+import com.maxwell.mongodb.model.Status;
 import com.maxwell.mongodb.usecase.DetalharPagamento;
 import com.maxwell.mongodb.usecase.RealizarPagamento;
 import com.maxwell.mongodb.usecase.RemoverPagamento;
@@ -31,8 +32,8 @@ public class PaymentResource {
     }
 
     @GetMapping
-    public ResponseEntity<PaymentDetails> detalharPagamento() {
-        return new ResponseEntity<>(detalharPagamentoUseCase.detalhar(), HttpStatus.OK);
+    public ResponseEntity<PaymentDetails> detalharPagamento(@RequestParam Status status) {
+        return new ResponseEntity<>(detalharPagamentoUseCase.detalhar(status), HttpStatus.OK);
     }
 
     @DeleteMapping

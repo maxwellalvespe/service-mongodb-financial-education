@@ -1,5 +1,6 @@
 package com.maxwell.mongodb.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,10 +15,10 @@ import java.math.BigDecimal;
 public class PaymentDetails {
 
     private Integer totalInstallmentsPaid;
-    private Double paymentEffective;
+    private String paymentEffective;
+    private String effectiveEconomy;
+    private String valueExpectedFinance;
 
-    private BigDecimal effectiveEconomy;
-
-    private BigDecimal valueExpectedFinance;
+    private String valueUnpaid;
 
 }
