@@ -18,7 +18,8 @@
  - No projeto foi utilizado as seguintes ferramentas.
    - mongoDb
    - docker
-   - java 17
+   - java 19
+   - Gradle
    - lombook
  
  - Para resolver a abordagem da previsão para saque de investimento foi utilizado dois recursos do java.time o DateTimeFormatter e o ChronoUnit 
